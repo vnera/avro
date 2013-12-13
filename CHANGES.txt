@@ -28,6 +28,9 @@ Avro 1.7.5 (12 August 2013)
 
   IMPROVEMENTS
 
+    AVRO-1234. Java: Permit AvroInputFormat to process files whose
+    names don't end in .avro.  (Dave Beech & Sandy Ryza via cutting)
+
     AVRO-1260. Ruby: Improve read performance. (Martin Kleppmann via cutting)
 
     AVRO-1267. Java: Permit dashes in IDL property names. (cutting)
