@@ -80,6 +80,7 @@ public class ThriftData extends GenericData {
 
   @Override
   protected void setField(Object r, String n, int pos, Object v, Object state) {
+    if (v == null && r instanceof TUnion) return;
     ((TBase)r).setFieldValue(((TFieldIdEnum[])state)[pos], v);
   }
 
@@ -110,7 +111,7 @@ public class ThriftData extends GenericData {
 
   @Override
   protected boolean isRecord(Object datum) {
-    return datum instanceof TBase && !(datum instanceof TUnion);
+    return datum instanceof TBase;
   }
 
   @Override
