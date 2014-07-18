@@ -41,7 +41,6 @@ import org.apache.avro.hadoop.file.HadoopCodecFactory;
 import static org.apache.avro.file.DataFileConstants.DEFAULT_SYNC_INTERVAL;
 import static org.apache.avro.file.DataFileConstants.DEFLATE_CODEC;
 import static org.apache.avro.file.DataFileConstants.XZ_CODEC;
-import static org.apache.avro.file.CodecFactory.DEFAULT_DEFLATE_LEVEL;
 import static org.apache.avro.file.CodecFactory.DEFAULT_XZ_LEVEL;
 
 /**
@@ -65,6 +64,9 @@ public class AvroOutputFormat <T>
 
   /** The configuration key for Avro sync interval. */
   public static final String SYNC_INTERVAL_KEY = "avro.mapred.sync.interval";
+
+  /** The default deflate level. */
+  public static final int DEFAULT_DEFLATE_LEVEL = 1;
 
   /** Enable output compression using the deflate codec and specify its level.*/
   public static void setDeflateLevel(JobConf job, int level) {
@@ -113,7 +115,7 @@ public class AvroOutputFormat <T>
     CodecFactory factory = null;
     
     if (FileOutputFormat.getCompressOutput(job)) {
-      int deflateLevel = job.getInt(DEFLATE_LEVEL_KEY, DEFAULT_DEFLATE_LEVEL);
+      int deflateLevel = job.getInt(DEFLATE_LEVEL_KEY, CodecFactory.DEFAULT_DEFLATE_LEVEL);
       int xzLevel = job.getInt(XZ_LEVEL_KEY, DEFAULT_XZ_LEVEL);
       String codecName = job.get(AvroJob.OUTPUT_CODEC);
       
