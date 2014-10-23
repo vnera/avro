@@ -36,6 +36,10 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
+    <!-- Java versions -->
+    <javaVersion>1.7</javaVersion>
+    <targetJavaVersion>1.6</targetJavaVersion>
+
     <!-- version properties for dependencies -->
     
     <!--
@@ -159,7 +163,7 @@
           <version>${compiler-plugin.version}</version>
           <configuration>
             <source>1.6</source>
-            <target>1.6</target>
+            <target>${targetJavaVersion}</target>
           </configuration>
         </plugin>
         <plugin>
@@ -285,6 +289,42 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>${enforcer-plugin.version}</version>
+        <inherited>false</inherited>
+        <configuration>
+          <rules>
+            <requireJavaVersion>
+              <version>[${javaVersion}.0,${javaVersion}.1000}]</version>
+            </requireJavaVersion>
+          </rules>
+        </configuration>
+        <executions>
+          <execution>
+            <id>clean</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <phase>pre-clean</phase>
+          </execution>
+          <execution>
+            <id>default</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <phase>validate</phase>
+          </execution>
+          <execution>
+            <id>site</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <phase>pre-site</phase>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.felix</groupId>
