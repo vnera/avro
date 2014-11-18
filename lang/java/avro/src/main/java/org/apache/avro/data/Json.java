@@ -18,9 +18,14 @@
 package org.apache.avro.data;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.Iterator;
 
+import org.apache.avro.util.internal.JacksonUtils;
+import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.JsonNodeFactory;
 import org.codehaus.jackson.node.LongNode;
 import org.codehaus.jackson.node.DoubleNode;
@@ -42,6 +47,9 @@ import org.apache.avro.io.ResolvingDecoder;
 /** Utilities for reading and writing arbitrary Json data in Avro format. */
 public class Json {
   private Json() {}                               // singleton: no public ctor
+
+  static final JsonFactory FACTORY = new JsonFactory();
+  static final ObjectMapper MAPPER = new ObjectMapper(FACTORY);
 
   /** The schema for Json data. */
   public static final Schema SCHEMA;
@@ -90,6 +98,69 @@ public class Json {
       resolver.drain();
       return result;
     }
+  }
+
+  /** {@link DatumWriter} for arbitrary Json data using the object model described
+   *  in {@link org.apache.avro.JsonProperties}. */
+  public static class ObjectWriter implements DatumWriter<Object> {
+
+    @Override public void setSchema(Schema schema) {
+      if (!SCHEMA.equals(schema))
+        throw new RuntimeException("Not the Json schema: "+schema);
+    }
+
+    @Override
+    public void write(Object datum, Encoder out) throws IOException {
+      Json.writeObject(datum, out);
+    }
+  }
+
+  /** {@link DatumReader} for arbitrary Json data using the object model described
+   *  in {@link org.apache.avro.JsonProperties}. */
+  public static class ObjectReader implements DatumReader<Object> {
+    private Schema written;
+    private ResolvingDecoder resolver;
+
+    @Override public void setSchema(Schema schema) {
+      this.written = SCHEMA.equals(written) ? null : schema;
+    }
+
+    @Override
+    public Object read(Object reuse, Decoder in) throws IOException {
+      if (written == null)                        // same schema
+        return Json.readObject(in);
+
+      // use a resolver to adapt alternate version of Json schema
+      if (resolver == null)
+        resolver = DecoderFactory.get().resolvingDecoder(written, SCHEMA, null);
+      resolver.configure(in);
+      Object result = Json.readObject(resolver);
+      resolver.drain();
+      return result;
+    }
+  }
+
+  /**
+   * Parses a JSON string and converts it to the object model described in
+   * {@link org.apache.avro.JsonProperties}.
+   */
+  public static Object parseJson(String s) {
+    try {
+      return JacksonUtils.toObject(MAPPER.readTree(FACTORY.createJsonParser(
+          new StringReader(s))));
+    } catch (JsonParseException e) {
+      throw new RuntimeException(e);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  /**
+   * Converts an instance of the object model described in
+   * {@link org.apache.avro.JsonProperties} to a JSON string.
+   */
+  public static String toString(Object datum) {
+    return JacksonUtils.toJsonNode(datum).toString();
   }
 
   /** Note: this enum must be kept aligned with the union in Json.avsc. */
@@ -179,6 +250,14 @@ public class Json {
     default:
       throw new AvroRuntimeException("Unexpected Json node type");
     }
+  }
+
+  private static void writeObject(Object datum, Encoder out) throws IOException {
+    write(JacksonUtils.toJsonNode(datum), out);
+  }
+
+  private static Object readObject(Decoder in) throws IOException {
+    return JacksonUtils.toObject(read(in));
   }
 
 }
