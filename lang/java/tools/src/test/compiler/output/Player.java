@@ -210,13 +210,14 @@ public class Player extends org.apache.avro.specific.SpecificRecordBase implemen
       return this; 
     }
 
-    /** 
+    /**
       * Checks whether the 'number' field has been set.
       * The number of the player
       */
     public boolean hasNumber() {
       return fieldSetFlags()[0];
     }
+
 
     /**
       * Clears the value of the 'number' field.
@@ -245,12 +246,13 @@ public class Player extends org.apache.avro.specific.SpecificRecordBase implemen
       return this; 
     }
 
-    /** 
+    /**
       * Checks whether the 'first_name' field has been set.
       */
     public boolean hasFirstName() {
       return fieldSetFlags()[1];
     }
+
 
     /**
       * Clears the value of the 'first_name' field.
@@ -279,12 +281,13 @@ public class Player extends org.apache.avro.specific.SpecificRecordBase implemen
       return this; 
     }
 
-    /** 
+    /**
       * Checks whether the 'last_name' field has been set.
       */
     public boolean hasLastName() {
       return fieldSetFlags()[2];
     }
+
 
     /**
       * Clears the value of the 'last_name' field.
@@ -313,12 +316,13 @@ public class Player extends org.apache.avro.specific.SpecificRecordBase implemen
       return this; 
     }
 
-    /** 
+    /**
       * Checks whether the 'position' field has been set.
       */
     public boolean hasPosition() {
       return fieldSetFlags()[3];
     }
+
 
     /**
       * Clears the value of the 'position' field.
