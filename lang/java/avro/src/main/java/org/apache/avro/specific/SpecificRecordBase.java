@@ -17,6 +17,12 @@
  */
 package org.apache.avro.specific;
 
+import java.io.Externalizable;
+import java.io.ObjectOutput;
+import java.io.ObjectInput;
+import java.io.IOException;
+
+import org.apache.avro.Conversion;
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
 
@@ -28,6 +34,11 @@ public abstract class SpecificRecordBase
   public abstract Object get(int field);
   public abstract void put(int field, Object value);
 
+  public Conversion<?> getConversion(int field) {
+    // for backward-compatibility. no older specific classes have conversions.
+    return null;
+  }
+
   @Override
   public void put(String fieldName, Object value) {
     put(getSchema().getField(fieldName).pos(), value);
@@ -36,6 +47,10 @@ public abstract class SpecificRecordBase
   @Override
   public Object get(String fieldName) {
     return get(getSchema().getField(fieldName).pos());
+  }
+
+  public Conversion<?> getConverion(String fieldName) {
+    return getConversion(getSchema().getField(fieldName).pos());
   }
 
   @Override
