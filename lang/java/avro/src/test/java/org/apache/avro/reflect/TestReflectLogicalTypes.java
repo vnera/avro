@@ -25,6 +25,7 @@ import org.apache.avro.specific.SpecificData;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -501,6 +502,7 @@ public class TestReflectLogicalTypes {
     }
   }
 
+  @Ignore(value="Depends on a behavior change in AVRO-1368, not backported")
   @Test(expected = DataFileWriter.AppendWriteException.class)
   public void testWriteUUIDMissingLogicalType() throws IOException {
     Schema uuidSchema = SchemaBuilder.record(RecordWithUUID.class.getName())
