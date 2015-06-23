@@ -27,7 +27,7 @@
 
   <groupId>org.apache.avro</groupId>
   <artifactId>avro-toplevel</artifactId>
-  <version>1.7.6-cdh5.3.5-SNAPSHOT</version>
+  <version>1.7.6-cdh5.3.6-SNAPSHOT-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Apache Avro Toplevel</name>
