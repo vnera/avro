@@ -82,25 +82,25 @@ public class JacksonUtils {
     } else if (jsonNode.isNull()) {
       return JsonProperties.NULL_VALUE;
     } else if (jsonNode.isBoolean()) {
-      return jsonNode.asBoolean();
+      return jsonNode.getValueAsBoolean();
     } else if (jsonNode.isInt()) {
       if (schema == null || schema.getType().equals(Schema.Type.INT)) {
-        return jsonNode.asInt();
+        return jsonNode.getValueAsInt();
       } else if (schema.getType().equals(Schema.Type.LONG)) {
-        return jsonNode.asLong();
+        return jsonNode.getValueAsLong();
       }
     } else if (jsonNode.isLong()) {
-      return jsonNode.asLong();
+      return jsonNode.getValueAsLong();
     } else if (jsonNode.isDouble()) {
       if (schema == null || schema.getType().equals(Schema.Type.DOUBLE)) {
-        return jsonNode.asDouble();
+        return jsonNode.getValueAsDouble();
       } else if (schema.getType().equals(Schema.Type.FLOAT)) {
-        return (float) jsonNode.asDouble();
+        return (float) jsonNode.getValueAsDouble();
       }
     } else if (jsonNode.isTextual()) {
       if (schema == null || schema.getType().equals(Schema.Type.STRING) ||
           schema.getType().equals(Schema.Type.ENUM)) {
-        return jsonNode.asText();
+        return jsonNode.getValueAsText();
       } else if (schema.getType().equals(Schema.Type.BYTES)) {
         try {
           return jsonNode.getTextValue().getBytes(BYTES_CHARSET);
