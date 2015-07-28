@@ -306,3 +306,20 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 
 ----------------------------------------------------------------------
+
+This product includes code from the Jackson library.
+
+Jackson is a high-performance, Free/Open Source JSON processing library.  It
+was originally written by Tatu Saloranta (tatu.saloranta@iki.fi), and has been
+in development since 2007. It is currently developed by a community of
+developers, as well as supported commercially by FasterXML.com.
+
+JsonStringEncoder from 1.9.13 has been copied into this project from
+jackson-core-asl:
+
+Copyright: 2013 Tatu Saloranta
+Home page: http://jackson.codehaus.org
+See also: http://wiki.fasterxml.com/JacksonDocumentation
+License: http://www.apache.org/licenses/LICENSE-2.0.txt
+
+----------------------------------------------------------------------
