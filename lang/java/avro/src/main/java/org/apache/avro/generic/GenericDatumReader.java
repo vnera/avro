@@ -195,7 +195,7 @@ public class GenericDatumReader<D> implements DatumReader<D> {
       switch (schema.getType()) {
       case RECORD:  return conversion.fromRecord((IndexedRecord) datum, schema, type);
       case ENUM:    return conversion.fromEnumSymbol((GenericEnumSymbol) datum, schema, type);
-      case ARRAY:   return conversion.fromArray(getData().getArrayAsCollection(datum), schema, type);
+      case ARRAY:   return conversion.fromArray((Collection) datum, schema, type);
       case MAP:     return conversion.fromMap((Map<?, ?>) datum, schema, type);
       case FIXED:   return conversion.fromFixed((GenericFixed) datum, schema, type);
       case STRING:  return conversion.fromCharSequence((CharSequence) datum, schema, type);
