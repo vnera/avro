@@ -20,12 +20,8 @@ package org.apache.avro;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import org.apache.avro.util.WeakIdentityHashMap;
 
 public class LogicalTypes {
-
-  private static final Map<Schema, LogicalType> CACHE =
-      new WeakIdentityHashMap<Schema, LogicalType>();
 
   public interface LogicalTypeFactory {
     LogicalType fromSchema(Schema schema);
@@ -52,16 +48,7 @@ public class LogicalTypes {
   }
 
   public static LogicalType fromSchemaIgnoreInvalid(Schema schema) {
-    if (CACHE.containsKey(schema)) {
-      return CACHE.get(schema);
-    }
-
-    LogicalType logicalType = fromSchemaImpl(schema, false);
-
-    // add to the cache, even if it is null
-    CACHE.put(schema, logicalType);
-
-    return logicalType;
+    return fromSchemaImpl(schema, false);
   }
 
   private static LogicalType fromSchemaImpl(Schema schema, boolean throwErrors) {
