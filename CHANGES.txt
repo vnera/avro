@@ -37,6 +37,9 @@ Trunk (not yet released)
 
   IMPROVEMENTS
 
+    AVRO-1895. Java: Fix GenericData#deepCopy() to support logical types.
+    (cutting via busbey)
+
     AVRO-1441. Java: Improve documentation for Maven configuration.
     (Jesse Anderson via cutting)
 
