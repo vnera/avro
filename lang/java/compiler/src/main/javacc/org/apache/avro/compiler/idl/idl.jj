@@ -1498,7 +1498,7 @@ Schema DecimalTypeProperties():
   int scale;
 }
 {
-  "(" {precision = Json().asInt();} "," {scale = Json().asInt();} ")"
+  "(" {precision = Json().getIntValue();} "," {scale = Json().getIntValue();} ")"
   {
     return LogicalTypes.decimal(precision, scale).addToSchema(Schema.create(Type.BYTES)); 
   }

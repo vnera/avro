@@ -44,7 +44,7 @@ public class Player extends org.apache.avro.specific.SpecificRecordBase implemen
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
-  // Used by DatumReader.  Applications should not call. 
+  // Used by DatumReader.  Applications should not call.
   @SuppressWarnings(value="unchecked")
   public void put(int field$, java.lang.Object value$) {
     switch (field$) {
