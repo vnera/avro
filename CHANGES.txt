@@ -120,6 +120,10 @@ Trunk (not yet released)
 
     AVRO-1540. C++ doesn't build in Ubuntu. (thiru)
 
+    AVRO-1943: Java: Flaky test:
+    TestNettyServerWithCompression.testConnectionsCount
+    (Gabor Szadovszky via tomwhite)
+
 Avro 1.7.6 (15 January 2014)
 
   NEW FEATURES
