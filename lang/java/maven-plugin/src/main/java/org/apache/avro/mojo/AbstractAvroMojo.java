@@ -123,13 +123,6 @@ public abstract class AbstractAvroMojo extends AbstractMojo {
   protected boolean createSetters;
 
   /**
-   * Determines whether or not to use Java classes for decimal types
-   *
-   * @parameter default-value="false"
-   */
-  protected boolean enableDecimalLogicalType;
-
-  /**
    * The current Maven project.
    * 
    * @parameter default-value="${project}"

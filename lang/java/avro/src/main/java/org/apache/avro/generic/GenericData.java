@@ -20,7 +20,6 @@ package org.apache.avro.generic;
 import java.nio.ByteBuffer;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.AbstractList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -36,7 +35,6 @@ import java.util.Map;
 import org.apache.avro.AvroRuntimeException;
 import org.apache.avro.AvroTypeException;
 import org.apache.avro.Conversion;
-import org.apache.avro.Conversions;
 import org.apache.avro.LogicalType;
 import org.apache.avro.Schema;
 import org.apache.avro.Schema.Field;
@@ -540,8 +538,9 @@ public class GenericData {
       buffer.append("\"");
     } else if (isBytes(datum)) {
       buffer.append("{\"bytes\": \"");
-      ByteBuffer bytes = ((ByteBuffer) datum).duplicate();
-      writeEscapedString(StandardCharsets.ISO_8859_1.decode(bytes), buffer);
+      ByteBuffer bytes = (ByteBuffer)datum;
+      for (int i = bytes.position(); i < bytes.limit(); i++)
+        buffer.append((char)bytes.get(i));
       buffer.append("\"}");
     } else if (((datum instanceof Float) &&       // quote Nan & Infinity
                 (((Float)datum).isInfinite() || ((Float)datum).isNaN()))
@@ -556,7 +555,7 @@ public class GenericData {
   }
   
   /* Adapted from http://code.google.com/p/json-simple */
-  private void writeEscapedString(CharSequence string, StringBuilder builder) {
+  private void writeEscapedString(String string, StringBuilder builder) {
     for(int i = 0; i < string.length(); i++){
       char ch = string.charAt(i);
       switch(ch){
@@ -1006,31 +1005,15 @@ public class GenericData {
 
   /**
    * Makes a deep copy of a value given its schema.
-   * <P>Logical types are converted to raw types, copied, then converted back.
    * @param schema the schema of the value to deep copy.
    * @param value the value to deep copy.
    * @return a deep copy of the given value.
    */
   @SuppressWarnings({ "rawtypes", "unchecked" })
   public <T> T deepCopy(Schema schema, T value) {
-    if (value == null) return null;
-    LogicalType logicalType = schema.getLogicalType();
-    if (logicalType == null)           // not a logical type -- use raw copy
-      return (T)deepCopyRaw(schema, value);
-    Conversion conversion = getConversionByClass(value.getClass(), logicalType);
-    if (conversion == null)            // no conversion defined -- try raw copy
-      return (T)deepCopyRaw(schema, value);
-    // logical type with conversion: convert to raw, copy, then convert back to logical
-    Object raw = Conversions.convertToRawType(value, schema, logicalType, conversion);
-    Object copy = deepCopyRaw(schema, raw);       // copy raw
-    return (T)Conversions.convertToLogicalType(copy, schema, logicalType, conversion);
-  }
-
-  private Object deepCopyRaw(Schema schema, Object value) {
     if (value == null) {
       return null;
     }
-
     switch (schema.getType()) {
       case ARRAY:
         List<Object> arrayValue = (List) value;
@@ -1039,7 +1022,7 @@ public class GenericData {
         for (Object obj : arrayValue) {
           arrayCopy.add(deepCopy(schema.getElementType(), obj));
         }
-        return arrayCopy;
+        return (T)arrayCopy;
       case BOOLEAN:
         return value; // immutable
       case BYTES:
@@ -1049,14 +1032,14 @@ public class GenericData {
         byte[] bytesCopy = new byte[length];
         byteBufferValue.get(bytesCopy, 0, length);
         byteBufferValue.position(start);
-        return ByteBuffer.wrap(bytesCopy, 0, length);
+        return (T)ByteBuffer.wrap(bytesCopy, 0, length);
       case DOUBLE:
         return value; // immutable
       case ENUM:
         // Enums are immutable; shallow copy will suffice
         return value;
       case FIXED:
-        return createFixed(null, ((GenericFixed) value).bytes(), schema);
+        return (T)createFixed(null, ((GenericFixed) value).bytes(), schema);
       case FLOAT:
         return value; // immutable
       case INT:
@@ -1071,7 +1054,7 @@ public class GenericData {
           mapCopy.put((CharSequence)(deepCopy(STRINGS, entry.getKey())),
               deepCopy(schema.getValueType(), entry.getValue()));
         }
-        return mapCopy;
+        return (T)mapCopy;
       case NULL:
         return null;
       case RECORD:
@@ -1085,11 +1068,11 @@ public class GenericData {
                                      getField(value, name, pos, oldState));
           setField(newRecord, name, pos, newValue, newState);
         }
-        return newRecord;
+        return (T)newRecord;
       case STRING:
         // Strings are immutable
         if (value instanceof String) {
-          return value;
+          return (T)value;
         }
         
         // Some CharSequence subclasses are mutable, so we still need to make 
@@ -1097,9 +1080,9 @@ public class GenericData {
         else if (value instanceof Utf8) {
           // Utf8 copy constructor is more efficient than converting 
           // to string and then back to Utf8
-          return new Utf8((Utf8)value);
+          return (T)new Utf8((Utf8)value);
         }
-        return new Utf8(value.toString());
+        return (T)new Utf8(value.toString());
       case UNION:
         return deepCopy(
             schema.getTypes().get(resolveUnion(schema, value)), value);

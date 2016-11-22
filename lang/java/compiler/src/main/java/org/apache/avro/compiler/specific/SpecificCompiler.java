@@ -34,12 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.avro.Conversion;
-import org.apache.avro.Conversions;
-import org.apache.avro.LogicalTypes;
-import org.apache.avro.data.TimeConversions.DateConversion;
-import org.apache.avro.data.TimeConversions.TimeConversion;
-import org.apache.avro.data.TimeConversions.TimestampConversion;
 import org.apache.avro.specific.SpecificData;
 import org.codehaus.jackson.JsonNode;
 
@@ -66,37 +60,8 @@ import static org.apache.avro.specific.SpecificData.RESERVED_WORDS;
  * Java reserved keywords are mangled to preserve compilation.
  */
 public class SpecificCompiler {
-
-  /*
-   * From Section 4.10 of the Java VM Specification:
-   *    A method descriptor is valid only if it represents method parameters with a total length of 255 or less,
-   *    where that length includes the contribution for this in the case of instance or interface method invocations.
-   *    The total length is calculated by summing the contributions of the individual parameters, where a parameter
-   *    of type long or double contributes two units to the length and a parameter of any other type contributes one unit.
-   *
-   * Arguments of type Double/Float contribute 2 "parameter units" to this limit, all other types contribute 1
-   * "parameter unit". All instance methods for a class are passed a reference to the instance (`this), and hence,
-   * they are permitted at most `JVM_METHOD_ARG_LIMIT-1` "parameter units" for their arguments.
-   *
-   * @see <a href="http://docs.oracle.com/javase/specs/jvms/se7/html/jvms-4.html#jvms-4.10">JVM Spec: Section 4.10</a>
-   */
-  private static final int JVM_METHOD_ARG_LIMIT = 255;
-
-  /*
-   * Note: This is protected instead of private only so it's visible for testing.
-   */
-  protected static final int MAX_FIELD_PARAMETER_UNIT_COUNT = JVM_METHOD_ARG_LIMIT - 1;
-
   public static enum FieldVisibility {
     PUBLIC, PUBLIC_DEPRECATED, PRIVATE
-  }
-
-  private static final SpecificData SPECIFIC = new SpecificData();
-  static {
-    SPECIFIC.addLogicalTypeConversion(new DateConversion());
-    SPECIFIC.addLogicalTypeConversion(new TimeConversion());
-    SPECIFIC.addLogicalTypeConversion(new TimestampConversion());
-    SPECIFIC.addLogicalTypeConversion(new Conversions.DecimalConversion());
   }
 
   private final Set<Schema> queue = new HashSet<Schema>();
@@ -105,16 +70,7 @@ public class SpecificCompiler {
   private String templateDir;
   private FieldVisibility fieldVisibility = FieldVisibility.PUBLIC_DEPRECATED;
   private boolean createSetters = true;
-  private boolean createAllArgsConstructor = true;
   private String outputCharacterEncoding;
-  private boolean enableDecimalLogicalType = false;
-
-  /*
-   * Used in the record.vm template.
-   */
-  public boolean isCreateAllArgsConstructor() {
-    return createAllArgsConstructor;
-  }
 
   /* Reserved words for accessor/mutator methods */
   private static final Set<String> ACCESSOR_MUTATOR_RESERVED_WORDS = 
@@ -208,14 +164,6 @@ public class SpecificCompiler {
    */
   public void setCreateSetters(boolean createSetters) {
     this.createSetters = createSetters;
-  }
-
-  /**
-   * Set to true to use {@link java.math.BigDecimal} instead of
-   * {@link java.nio.ByteBuffer} for logical type "decimal"
-   */
-  public void setEnableDecimalLogicalType(boolean enableDecimalLogicalType) {
-    this.enableDecimalLogicalType = enableDecimalLogicalType;
   }
 
   private static String logChuteName = null;
@@ -408,33 +356,6 @@ public class SpecificCompiler {
     }
   }
 
-  /**
-   * Returns the number of parameter units required by fields for the
-   * AllArgsConstructor.
-   *
-   * @param record a Record schema
-   */
-  protected int calcAllArgConstructorParameterUnits(Schema record) {
-
-    if (record.getType() != Schema.Type.RECORD)
-      throw new RuntimeException("This method must only be called for record schemas.");
-
-    return record.getFields().size();
-  }
-
-  protected void validateRecordForCompilation(Schema record) {
-    this.createAllArgsConstructor =
-        calcAllArgConstructorParameterUnits(record) <= MAX_FIELD_PARAMETER_UNIT_COUNT;
-
-    if (!this.createAllArgsConstructor)
-      new Slf4jLogChute().log(LogChute.WARN_ID, "Record '" + record.getFullName() +
-              "' contains more than " + MAX_FIELD_PARAMETER_UNIT_COUNT +
-              " parameters which exceeds the JVM " +
-              "spec for the number of permitted constructor arguments. Clients must " +
-              "rely on the builder pattern to create objects instead. For more info " +
-              "see JIRA ticket AVRO-1642.");
-  }
-
   OutputFile compile(Schema schema) {
     schema = addStringType(schema);               // annotate schema as needed
     String output = "";
@@ -444,7 +365,6 @@ public class SpecificCompiler {
 
     switch (schema.getType()) {
     case RECORD:
-      validateRecordForCompilation(schema);
       output = renderTemplate(templateDir+"record.vm", context);
       break;
     case ENUM:
@@ -574,17 +494,6 @@ public class SpecificCompiler {
 
   /** Utility for template use.  Returns the java type for a Schema. */
   public String javaType(Schema schema) {
-    return javaType(schema, true);
-  }
-
-  private String javaType(Schema schema, boolean checkConvertedLogicalType) {
-    if (checkConvertedLogicalType) {
-      String convertedLogicalType = getConvertedLogicalType(schema);
-      if (convertedLogicalType != null) {
-        return convertedLogicalType;
-      }
-    }
-
     switch (schema.getType()) {
     case RECORD:
     case ENUM:
@@ -614,60 +523,16 @@ public class SpecificCompiler {
     }
   }
 
-  private String getConvertedLogicalType(Schema schema) {
-    if (enableDecimalLogicalType
-        || !(schema.getLogicalType() instanceof LogicalTypes.Decimal)) {
-      Conversion<?> conversion = SPECIFIC
-          .getConversionFor(schema.getLogicalType());
-      if (conversion != null) {
-        return conversion.getConvertedType().getName();
-      }
-    }
-    return null;
-  }
-
   /** Utility for template use.  Returns the unboxed java type for a Schema. */
   public String javaUnbox(Schema schema) {
-    String convertedLogicalType = getConvertedLogicalType(schema);
-    if (convertedLogicalType != null) {
-      return convertedLogicalType;
-    }
-
     switch (schema.getType()) {
-      case INT:     return "int";
-      case LONG:    return "long";
-      case FLOAT:   return "float";
-      case DOUBLE:  return "double";
-      case BOOLEAN: return "boolean";
-      default:      return javaType(schema, false);
+    case INT:     return "int";
+    case LONG:    return "long";
+    case FLOAT:   return "float";
+    case DOUBLE:  return "double";
+    case BOOLEAN: return "boolean";
+    default:      return javaType(schema);
     }
-  }
-
-  public boolean hasLogicalTypeField(Schema schema) {
-    for (Schema.Field field : schema.getFields()) {
-      if (field.schema().getLogicalType() != null) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  public String conversionInstance(Schema schema) {
-    if (schema == null || schema.getLogicalType() == null) {
-      return "null";
-    }
-
-    if (LogicalTypes.date().equals(schema.getLogicalType())) {
-      return "DATE_CONVERSION";
-    } else if (LogicalTypes.timeMillis().equals(schema.getLogicalType())) {
-      return "TIME_CONVERSION";
-    } else if (LogicalTypes.timestampMillis().equals(schema.getLogicalType())) {
-      return "TIMESTAMP_CONVERSION";
-    } else if (LogicalTypes.Decimal.class.equals(schema.getLogicalType().getClass())) {
-      return enableDecimalLogicalType ? "DECIMAL_CONVERSION" : "null";
-    }
-
-    return "null";
   }
 
   /** Utility for template use.  Returns the java annotations for a schema. */

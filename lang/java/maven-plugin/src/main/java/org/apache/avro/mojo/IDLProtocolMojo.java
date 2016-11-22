@@ -93,7 +93,6 @@ public class IDLProtocolMojo extends AbstractAvroMojo {
       compiler.setTemplateDir(templateDirectory);
       compiler.setFieldVisibility(getFieldVisibility());
       compiler.setCreateSetters(createSetters);
-      compiler.setEnableDecimalLogicalType(enableDecimalLogicalType);
       compiler.compileToDestination(null, outputDirectory);
     } catch (ParseException e) {
       throw new IOException(e);
