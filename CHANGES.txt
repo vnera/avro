@@ -123,6 +123,8 @@ Avro 1.8.2 (10 April 2017)
 
     AVRO-1813: Incorrect link to build instructions in Java Getting Started (Pietro Menna via gabor)
 
+    AVRO-1970: Java: Flaky test: TestInputBytes. (Gabor Szadovszky via tomwhite)
+
 Avro 1.8.1 (14 May 2016)
 
   INCOMPATIBLE CHANGES
