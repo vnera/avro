@@ -126,6 +126,8 @@ Trunk (not yet released)
 
     AVRO-1985: Unreleased resources (gabor)
 
+    AVRO-1970: Java: Flaky test: TestInputBytes. (Gabor Szadovszky via tomwhite)
+
 Avro 1.7.6 (15 January 2014)
 
   NEW FEATURES
