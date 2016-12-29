@@ -1,5 +1,19 @@
 Avro Change Log
 
+Trunk (not yet released)
+
+  INCOMPATIBLE CHANGES
+
+  NEW FEATURES
+
+  OPTIMIZATIONS
+
+  IMPROVEMENTS
+
+  BUG FIXES
+
+    AVRO-1985: Unreleased resources (gabor)
+
 Avro 1.8.2 (10 April 2017)
 
   INCOMPATIBLE CHANGES
