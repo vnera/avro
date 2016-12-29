@@ -124,6 +124,8 @@ Trunk (not yet released)
     TestNettyServerWithCompression.testConnectionsCount
     (Gabor Szadovszky via tomwhite)
 
+    AVRO-1985: Unreleased resources (gabor)
+
 Avro 1.7.6 (15 January 2014)
 
   NEW FEATURES
