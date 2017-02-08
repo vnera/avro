@@ -10,6 +10,8 @@ Trunk (not yet released)
 
   IMPROVEMENTS
 
+    AVRO-1975: Upgrade java dependencies (gabor)
+
   BUG FIXES
 
     AVRO-1985: Unreleased resources (gabor)
