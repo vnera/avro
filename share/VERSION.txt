@@ -1,1 +1,1 @@
-1.7.6-cdh5.11.0-SNAPSHOT
+1.7.6-cdh5.11.1-SNAPSHOT
