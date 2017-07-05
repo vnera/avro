@@ -23,7 +23,7 @@
   <parent>
     <artifactId>avro-parent</artifactId>
     <groupId>org.apache.avro</groupId>
-    <version>1.8.2</version>
+    <version>1.8.2-cdh6.x-SNAPSHOT</version>
     <relativePath>../</relativePath>
   </parent>
 
@@ -56,8 +56,8 @@
           <artifactId>maven-compiler-plugin</artifactId>
           <version>${compiler-plugin.version}</version>
           <configuration>
-            <source>1.6</source>
-            <target>1.6</target>
+            <source>${javaVersion}</source>
+            <target>${targetJavaVersion}</target>
           </configuration>
         </plugin>
         <plugin>
