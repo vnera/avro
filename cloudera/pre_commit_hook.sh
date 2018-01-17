@@ -22,6 +22,9 @@ export JAVA_HOME="${JAVA8_HOME}"
 export CDH_GBN=$(curl "http://builddb.infra.cloudera.com:8080/query?product=cdh&version=6.x&user=jenkins&tag=official")
 
 # Workaround to use proper mvn settings instead of wrong ~jenkins/.m2/settings.xml
-curl http://github.mtv.cloudera.com/raw/CDH/cdh/cdh6.x/gbn-m2-settings.xml > mvn_settings.xml
+mvn_settings="$(mktemp)"
+curl http://github.mtv.cloudera.com/raw/CDH/cdh/cdh6.x/gbn-m2-settings.xml > "$mvn_settings"
 
-mvn -s mvn_settings.xml -P cdh-precommit clean test --fail-at-end
+mvn -s "$mvn_settings" -P cdh-precommit clean test --fail-at-end
+
+rm "$mvn_settings"
