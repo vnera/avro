@@ -12,8 +12,6 @@ Trunk (not yet released)
 
     AVRO-1975: Upgrade java dependencies (gabor)
 
-    AVRO-2119: Run Apache Rat check on every java build (Niels Basjes)
-
   BUG FIXES
 
     AVRO-1985: Unreleased resources (gabor)
