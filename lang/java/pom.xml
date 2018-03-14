@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.avro</groupId>
     <artifactId>avro-toplevel</artifactId>
-    <version>1.7.6-cdh5.14.1-SNAPSHOT</version>
+    <version>1.7.6-cdh5.14.3-SNAPSHOT</version>
     <relativePath>../../</relativePath>
   </parent>
 
