@@ -23,7 +23,7 @@
   <parent>
     <artifactId>avro-parent</artifactId>
     <groupId>org.apache.avro</groupId>
-    <version>1.7.6-cdh5.14.3-SNAPSHOT</version>
+    <version>1.7.6-cdh5.14.4-SNAPSHOT</version>
     <relativePath>../</relativePath>
   </parent>
 
