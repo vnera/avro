@@ -31,6 +31,7 @@
 
     <avro.version>${project.version}</avro.version>
     <jackson.version>${jackson.version}</jackson.version>
+    <jackson-mapper-asl.version>${jackson-mapper-asl.version}</jackson-mapper-asl.version>
     <junit.version>${junit.version}</junit.version>
     <logback.version>1.0.0</logback.version>
     <slf4j.version>${slf4j.version}</slf4j.version>
@@ -55,7 +56,7 @@
     <dependency>
       <groupId>org.codehaus.jackson</groupId>
       <artifactId>jackson-mapper-asl</artifactId>
-      <version>\${jackson.version}</version>
+      <version>\${jackson-mapper-asl.version}</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
