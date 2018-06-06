@@ -19,13 +19,8 @@
 
 set -exu
 
-CURRENT_BRANCH=cdh6.0.x
-export CDH_GBN=$(curl "http://builddb.infra.cloudera.com:8080/resolvealias?alias=$CURRENT_BRANCH")
+{ find . -name pom.xml; echo share/VERSION.txt; } | xargs sed -i '' "s/$CDH_START_MAVEN_VERSION/$CDH_NEW_MAVEN_VERSION/g"
+sed -i '' 's/^CURRENT_BRANCH='$CDH_START_BRANCH'$/CURRENT_BRANCH='$CDH_NEW_BRANCH'/' cloudera/*
 
-# Workaround to use proper mvn settings instead of wrong ~jenkins/.m2/settings.xml
-mvn_settings="$(mktemp)"
-trap "rm -f $mvn_settings" EXIT
-curl http://github.mtv.cloudera.com/raw/CDH/cdh/${CURRENT_BRANCH}/gbn-m2-settings.xml > "$mvn_settings"
-
-mvn -s "$mvn_settings" -P cdh-precommit clean test --fail-at-end
+git add -u
 
