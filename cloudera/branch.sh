@@ -19,8 +19,7 @@
 
 set -exu
 
-{ find . -name pom.xml; echo share/VERSION.txt; } | xargs sed -i '' "s/$CDH_START_MAVEN_VERSION/$CDH_NEW_MAVEN_VERSION/g"
-sed -i '' 's/^CURRENT_BRANCH='$CDH_START_BRANCH'$/CURRENT_BRANCH='$CDH_NEW_BRANCH'/' cloudera/*
+{ find . -name pom.xml; echo share/VERSION.txt; } | xargs sed -i "s/$CDH_START_MAVEN_VERSION/$CDH_NEW_MAVEN_VERSION/g"
+sed -i 's/^CURRENT_BRANCH='$CDH_START_BRANCH'$/CURRENT_BRANCH='$CDH_NEW_BRANCH'/' cloudera/*
 
 git add -u
-
