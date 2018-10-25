@@ -1,1 +1,1 @@
-1.8.2-cdh6.x-SNAPSHOT
+1.8.2-cdh6.1.x-SNAPSHOT
