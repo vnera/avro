@@ -21,7 +21,6 @@ set -exu
 
 CURRENT_BRANCH=cdh6.x
 export CDH_GBN=$(curl "http://builddb.infra.cloudera.com:8080/resolvealias?alias=$CURRENT_BRANCH")
-export JAVA_HOME=${JAVA8_HOME}
 
 # Workaround to use proper mvn settings instead of wrong ~jenkins/.m2/settings.xml
 mvn_settings="$(mktemp)"
