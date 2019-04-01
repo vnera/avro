@@ -27,5 +27,7 @@ mvn_settings="$(mktemp)"
 trap "rm -f $mvn_settings" EXIT
 curl https://github.mtv.cloudera.com/raw/CDH/cdh/${CURRENT_BRANCH}/gbn-m2-settings.xml > "$mvn_settings"
 
-mvn -s "$mvn_settings" -P cdh-precommit clean test --fail-at-end
-
+# Executing clean (compile) and verify using the default jre8
+mvn -s "$mvn_settings" -P cdh-precommit clean verify --fail-at-end
+# Executing verify (without compile) using jre11
+mvn -s "$mvn_settings" -P cdh-precommit verify -Djvm=${OPENJDK_11_HOME}/bin/java --fail-at-end
