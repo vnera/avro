@@ -1,0 +1,18 @@
+Package: avro-libs
+Version: 1.8.2+cdh6.3.2-1605554
+Architecture: all
+Maintainer: vRNI, VMware, Inc. <https://www.vmware.com/support>
+Installed-Size: 47937
+Section: misc
+Priority: extra
+Homepage: http://avro.apache.org
+Description: Data serialization system
+ Avro provides rich data structures, a compact & fast binary data format, a
+ container file to store persistent data, remote procedure calls (RPC), and a
+ simple integration with dynamic languages. Code generation is not required to
+ read or write data files nor to use or implement RPC protocols. Code
+ generation as an optional optimization, only worth implementing for statically
+ typed languages.
+ .
+ .
+ Built by vRNI, VMware, Inc.

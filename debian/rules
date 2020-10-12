@@ -1,0 +1,54 @@
+#!/usr/bin/make -f
+export COMPONENT_HASH=8c20681d6bf33a69be546fee2b9373fed2b75fd4
+ AVRO_VERSION=1.8.2+cdh6.3.2
+ AVRO_PATCHED_VERSION=1.8.2-cdh6.3.2
+ AVRO_BASE_VERSION=1.8.2
+ AVRO_RELEASE=1605554
+ CDH_CUSTOMER_PATCH=p0
+ CDH_PARCEL_CUSTOM_VERSION=1.8.2+cdh6.3.2-1605554.bionic
+
+# AVRO_VERSION=1.8.2+cdh6.3.2-ni1.0
+# AVRO_PATCHED_VERSION=1.8.2-cdh6.3.2-ni1.0
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# -*- makefile -*-
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+%:
+	dh $@
+
+override_dh_auto_build:
+	env FULL_VERSION=${AVRO_PATCHED_VERSION} bash -x debian/do-component-build -Dmaven.repo.local=${HOME}/.m2/repository${M2_REPO_SUFFIX}
+
+# daymanc: PWD is not getting set, is a null string when passed in, causes install to fail. hardcode PWD to install
+# orig line:
+# env FULL_VERSION=${AVRO_PATCHED_VERSION} bash -x debian/install_avro.sh --build-dir=${PWD}/debian --prefix=${PWD}/debian/tmp --source-dir=${PWD}/debian
+# test1:
+#env FULL_VERSION=${AVRO_PATCHED_VERSION} bash -x debian/install_avro.sh --build-dir=/home/ubuntu/gitworkdir/avro/build/debian --prefix=/home/ubuntu/gitworkdir/avro/build/debian/tmp --source-dir=/home/ubuntu/gitworkdir/avro/build/debian
+override_dh_auto_install:
+	env FULL_VERSION=${AVRO_PATCHED_VERSION} bash -x debian/install_avro.sh --build-dir=/home/ubuntu/gitworkdir/avro/debian --prefix=/home/ubuntu/gitworkdir/avro/debian/tmp --source-dir=/home/ubuntu/gitworkdir/avro/debian
+
+override_dh_builddeb:
+	dh_builddeb -- -Zgzip
+
+override_dh_strip_nondeterminism:
+	# Disable dh_strip_nondeterminism to speed up the build
+
+override_dh_strip:
+	dh_strip --no-automatic-dbgsym

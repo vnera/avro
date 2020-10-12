@@ -1,0 +1,5 @@
+avro-libs (1.8.2+cdh6.3.2-1605554) cloudera; urgency=medium
+
+  * Please see git repos.
+
+ -- MAINTAINER <jenkins@cldrn-ub1604-ec2-c5d-18xlarge-spotblk-10a0.vpc.cloudera.com>  Fri, 08 Nov 2019 05:27:55 -0800

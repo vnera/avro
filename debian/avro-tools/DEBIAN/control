@@ -1,0 +1,14 @@
+Package: avro-tools
+Source: avro-libs
+Version: 1.8.2+cdh6.3.2-1605554
+Architecture: all
+Maintainer: vRNI, VMware, Inc. <https://www.vmware.com/support>
+Installed-Size: 10
+Depends: avro-libs, bigtop-utils (>= 0.7)
+Section: misc
+Priority: extra
+Homepage: http://avro.apache.org
+Description: Command-line utilities to work with Avro files
+ .
+ .
+ Built by vRNI, VMware, Inc.
